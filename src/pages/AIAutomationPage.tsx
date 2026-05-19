@@ -1,4 +1,4 @@
-import { CheckCircle, Cpu, Bot, BarChart3, Brain, Database, Zap, Target, TrendingUp, Users, Code, Shield, ArrowRight, Calendar, MessageCircle, GitBranch, FileCode, Workflow } from 'lucide-react';
+import {  Bot, BarChart3, Brain, Database, Zap, Target, TrendingUp, Users, Code,  ArrowRight, Calendar, MessageCircle, FileCode, Workflow } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import WaveBackground from '../components/WaveBackground';
 import FloatingShapes from '../components/FloatingShapes';

@@ -373,22 +373,21 @@ export default function Contact() {
             </div>
 
             <div className="mt-12">
-<Card3D>
-  <div className="rounded-2xl glass-effect border border-cyan-500/20 overflow-hidden relative">
-    
-    <iframe
-      src="https://www.google.com/maps?q=Shekhar+Central+Palasia+Indore+Madhya+Pradesh&output=embed"
-      className="w-full h-[450px] border-0"
-      loading="lazy"
-    />
+<div className="rounded-2xl overflow-hidden border border-cyan-500/20 relative">
+  
+  <iframe
+    src="https://www.google.com/maps?q=Indore+Madhya+Pradesh+India&output=embed"
+    className="w-full h-[450px] border-0"
+    loading="lazy"
+    allowFullScreen
+  />
 
-    {/* 📍 Location Label */}
-    <div className="absolute bottom-4 left-4 bg-black/70 px-4 py-2 rounded-lg text-white text-sm">
-      📍 Shekhar Central, Palasia, Indore (MP)
-    </div>
-
+  {/* 📍 Location Label */}
+  <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-md px-4 py-2 rounded-lg text-white text-sm border border-white/10">
+    📍 Indore, Madhya Pradesh, India
   </div>
-</Card3D>
+
+</div>
             </div>
           </div>
         </section>

@@ -1,5 +1,6 @@
-import { Calendar, MessageCircle, Hexagon, Mail, MapPin, Phone } from 'lucide-react';
+import { Calendar, MessageCircle, Mail, MapPin, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import logo from '../components/image/logo.jpeg';
 
 export default function Footer() {
   const footerLinks = {
@@ -32,9 +33,11 @@ export default function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 flex items-center justify-center shadow-glow animate-glow">
-                <Hexagon className="w-7 h-7 text-white" fill="currentColor" />
-              </div>
+            <img
+              src={logo}
+              alt="GlobeAIra Logo"
+              className="w-20 h-20 object-contain rounded-xl shadow-glow border border-white/10 bg-white/5 p-1"
+            />
               <div className="text-2xl font-black text-gradient">
                 GlobeAIra
                 <div><span className='text-sm font-bold text-gradient'>Tech Pvt Ltd</span></div>

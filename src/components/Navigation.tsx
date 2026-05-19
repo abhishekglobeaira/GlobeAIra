@@ -1,7 +1,7 @@
-import { Calendar, MessageCircle, Hexagon, Menu, X } from 'lucide-react';
+import { Calendar, MessageCircle, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
+import Logo from '../components/image/logo.jpeg';
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -22,9 +22,13 @@ export default function Navigation() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 flex items-center justify-center shadow-glow animate-glow">
-                <Hexagon className="w-6 h-6 text-white" fill="currentColor" />
-              </div>
+            <div>
+             <img
+              src={Logo}
+              alt="GlobeAIra Logo"
+              className="w-20 h-20 object-contain rounded-xl shadow-glow border border-white/10 bg-white/5 p-1"
+            />
+            </div>
               <div className="text-2xl font-bold text-gradient">
                 GlobeAIra 
                 <div className="text-sm font-bold text-gradient"><span>Tech Pvt Ltd</span></div>

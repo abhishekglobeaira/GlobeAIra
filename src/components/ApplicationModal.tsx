@@ -44,8 +44,7 @@ export default function ApplicationModal({
   jobTitle,
   onClose,
 }: ApplicationModalProps) {
-  const [formData, setFormData] =
-    useState<FormData>(INITIAL_FORM_DATA);
+  const [formData, setFormData] = useState<FormData>(INITIAL_FORM_DATA);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
@@ -54,14 +53,14 @@ export default function ApplicationModal({
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
 
     if (name.startsWith("test_")) {
       const questionKey = name.replace(
         "test_",
-        ""
+        "",
       ) as keyof FormData["testAnswers"];
 
       setFormData((prev) => ({
@@ -79,9 +78,7 @@ export default function ApplicationModal({
     }
   };
 
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (!file) return;
@@ -97,9 +94,7 @@ export default function ApplicationModal({
     }));
   };
 
-  const handleSubmit = async (
-    e: React.FormEvent
-  ) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setLoading(true);
@@ -132,17 +127,12 @@ export default function ApplicationModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-3xl max-h-[95vh] overflow-y-auto rounded-3xl bg-slate-900 border border-cyan-500/20 shadow-2xl">
-
         {/* Header */}
         <div className="sticky top-0 z-10 bg-slate-900 border-b border-slate-700 px-6 py-5 flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-white">
-              Job Application
-            </h2>
+            <h2 className="text-2xl font-bold text-white">Job Application</h2>
 
-            <p className="text-slate-400 text-sm mt-1">
-              {jobTitle}
-            </p>
+            <p className="text-slate-400 text-sm mt-1">{jobTitle}</p>
           </div>
 
           <button
@@ -176,9 +166,7 @@ export default function ApplicationModal({
               <div className="flex-1 h-[2px] bg-slate-700 mx-4">
                 <div
                   className={`h-full bg-cyan-500 transition-all duration-300 ${
-                    currentStep === 2
-                      ? "w-full"
-                      : "w-0"
+                    currentStep === 2 ? "w-full" : "w-0"
                   }`}
                 />
               </div>
@@ -194,9 +182,7 @@ export default function ApplicationModal({
                   2
                 </div>
 
-                <span className="text-slate-300 font-medium">
-                  Assessment
-                </span>
+                <span className="text-slate-300 font-medium">Assessment</span>
               </div>
             </div>
           </div>
@@ -204,17 +190,11 @@ export default function ApplicationModal({
 
         {/* Content */}
         <div className="p-6">
-
           {!submitted ? (
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-8"
-            >
-
+            <form onSubmit={handleSubmit} className="space-y-8">
               {/* STEP 1 */}
               {currentStep === 1 && (
                 <div className="space-y-6 animate-fade-in">
-
                   <h3 className="text-2xl font-bold text-white">
                     Personal Details
                   </h3>
@@ -237,7 +217,6 @@ export default function ApplicationModal({
 
                   {/* Email + Phone */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
                     <div>
                       <label className="block text-slate-300 mb-2">
                         Email *
@@ -301,25 +280,15 @@ export default function ApplicationModal({
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white focus:border-cyan-500 focus:outline-none"
                     >
-                      <option value="">
-                        Select Experience
-                      </option>
+                      <option value="">Select Experience</option>
 
-                      <option value="0-2">
-                        0-2 Years
-                      </option>
+                      <option value="0-2">0-2 Years</option>
 
-                      <option value="2-5">
-                        2-5 Years
-                      </option>
+                      <option value="2-5">2-5 Years</option>
 
-                      <option value="5-10">
-                        5-10 Years
-                      </option>
+                      <option value="5-10">5-10 Years</option>
 
-                      <option value="10+">
-                        10+ Years
-                      </option>
+                      <option value="10+">10+ Years</option>
                     </select>
                   </div>
 
@@ -344,9 +313,7 @@ export default function ApplicationModal({
                     <button
                       type="button"
                       disabled={!isStep1Valid}
-                      onClick={() =>
-                        setCurrentStep(2)
-                      }
+                      onClick={() => setCurrentStep(2)}
                       className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold flex items-center gap-2 disabled:opacity-50"
                     >
                       Next
@@ -359,39 +326,37 @@ export default function ApplicationModal({
               {/* STEP 2 */}
               {currentStep === 2 && (
                 <div className="space-y-6 animate-fade-in">
-
                   <h3 className="text-2xl font-bold text-white">
                     Behavior & Technical Questions
                   </h3>
 
                   {/* Questions */}
-                 {[
-  {
-    key: "q1",
-    question:
-      "When you get stuck on a tough technical issue, how do you usually figure it out?",
-  },
-  {
-    key: "q2",
-    question:
-      "If there’s a disagreement in the team, how do you normally handle it?",
-  },
-  {
-    key: "q3",
-    question:
-      "How do you usually pick up and learn new technologies?",
-  },
-  {
-    key: "q4",
-    question:
-      "When multiple tasks come at once, how do you decide what to work on first?",
-  },
-  {
-    key: "q5",
-    question:
-      "What kind of work or achievements keep you motivated?",
-  },
-
+                  {[
+                    {
+                      key: "q1",
+                      question:
+                        "When you get stuck on a tough technical issue, how do you usually figure it out?",
+                    },
+                    {
+                      key: "q2",
+                      question:
+                        "If there’s a disagreement in the team, how do you normally handle it?",
+                    },
+                    {
+                      key: "q3",
+                      question:
+                        "How do you usually pick up and learn new technologies?",
+                    },
+                    {
+                      key: "q4",
+                      question:
+                        "When multiple tasks come at once, how do you decide what to work on first?",
+                    },
+                    {
+                      key: "q5",
+                      question:
+                        "What kind of work or achievements keep you motivated?",
+                    },
                   ].map((q, index) => (
                     <div
                       key={q.key}
@@ -418,12 +383,9 @@ export default function ApplicationModal({
 
                   {/* Buttons */}
                   <div className="flex items-center justify-between">
-
                     <button
                       type="button"
-                      onClick={() =>
-                        setCurrentStep(1)
-                      }
+                      onClick={() => setCurrentStep(1)}
                       className="px-6 py-3 rounded-xl border border-slate-600 text-white flex items-center gap-2 hover:bg-white/10"
                     >
                       <ArrowLeft className="w-5 h-5" />
@@ -432,9 +394,7 @@ export default function ApplicationModal({
 
                     <button
                       type="submit"
-                      disabled={
-                        !isStep2Valid || loading
-                      }
+                      disabled={!isStep2Valid || loading}
                       className="px-8 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold flex items-center gap-2 disabled:opacity-50"
                     >
                       {loading ? (
@@ -452,7 +412,6 @@ export default function ApplicationModal({
             </form>
           ) : (
             <div className="text-center py-16">
-
               <div className="w-20 h-20 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 flex items-center justify-center mx-auto mb-6">
                 <CheckCircle className="w-10 h-10 text-white" />
               </div>
@@ -462,8 +421,7 @@ export default function ApplicationModal({
               </h2>
 
               <p className="text-slate-400">
-                Thank you for applying for the{" "}
-                {jobTitle} position.
+                Thank you for applying for the {jobTitle} position.
               </p>
 
               <button

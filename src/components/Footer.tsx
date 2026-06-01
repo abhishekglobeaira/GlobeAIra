@@ -1,6 +1,6 @@
 import { Calendar, MessageCircle, Mail, MapPin, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import logo from '../components/image/logo.jpeg';
+import logo from './Image/logo.jpeg';
 
 export default function Footer() {
   const footerLinks = {

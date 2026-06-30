@@ -20,7 +20,7 @@ export default function Footer() {
     contact: [
       { icon: Mail, label: 'connect@globeaira.com', href: 'mailto:connect@globeaira.com' },
       { icon: Phone, label: '+91 9039064608', href: 'tel:+91 9039064608' },
-      { icon: MapPin, label: 'Global Operations', href: '/contact/' }
+      { icon: MapPin, label: 'Global Operations', href: '/contact' }
     ]
   };
 
@@ -92,15 +92,26 @@ export default function Footer() {
             <ul className="space-y-3">
               {footerLinks.contact.map((item) => {
                 const Icon = item.icon;
+                const isInternal = item.href.startsWith('/') && !item.href.startsWith('/mailto') && !item.href.startsWith('/tel');
                 return (
                   <li key={item.href}>
-                    <a
-                      href={item.href}
-                      className="flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition-colors"
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span className="text-sm">{item.label}</span>
-                    </a>
+                    {isInternal ? (
+                      <Link
+                        to={item.href}
+                        className="flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition-colors"
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span className="text-sm">{item.label}</span>
+                      </Link>
+                    ) : (
+                      <a
+                        href={item.href}
+                        className="flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition-colors"
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span className="text-sm">{item.label}</span>
+                      </a>
+                    )}
                   </li>
                 );
               })}
@@ -109,13 +120,13 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-          <a
-            href="/contact"
+          <Link
+            to="/contact"
             className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl glass-effect text-white font-medium hover:bg-white/10 transition-all duration-300 transform hover:scale-105 group"
           >
             <Calendar className="w-5 h-5 group-hover:rotate-12 transition-transform" />
             Book Consultation
-          </a>
+          </Link>
           <a
             href="https://wa.me/+919039064608"
             className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 text-white font-medium hover:shadow-glow-lg transition-all duration-300 transform hover:scale-105 group"

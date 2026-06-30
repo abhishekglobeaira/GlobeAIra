@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Target, Users, Globe, Shield, TrendingUp, CheckCircle, ArrowRight, Calendar, MessageCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Card3D from './Card3D';
 
 export default function About() {
@@ -403,15 +404,15 @@ export default function About() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <a
-                    href="/contact"
+                  <Link
+                    to="/contact"
                     className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 text-white text-lg font-bold overflow-hidden shadow-glow-lg hover:shadow-glow-cyan transition-all duration-300 transform hover:scale-105"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 via-emerald-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <Calendar className="w-6 h-6 relative z-10 group-hover:rotate-12 transition-transform" />
                     <span className="relative z-10">Book 20-Min Strategy Call</span>
                     <ArrowRight className="w-6 h-6 relative z-10 group-hover:translate-x-2 transition-transform" />
-                  </a>
+                  </Link>
                   <a
                     href="https://wa.me/919039064608"
                     target="_blank"

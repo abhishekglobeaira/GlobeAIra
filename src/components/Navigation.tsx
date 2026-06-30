@@ -1,7 +1,7 @@
 import { Calendar, MessageCircle, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Logo from '../components/image/logo.jpeg';
+import Logo from './image/logo.jpeg';
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();

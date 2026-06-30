@@ -1,4 +1,4 @@
-import { ArrowRight, Calendar, MessageCircle, Code, Users, Building2, Factory, Gamepad2, Cpu, CheckCircle, Layers } from 'lucide-react';
+import { ArrowRight, Calendar, MessageCircle, Code, Users, Building2, Factory, Gamepad2, Cpu,  Layers } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Card3D from './Card3D';
 

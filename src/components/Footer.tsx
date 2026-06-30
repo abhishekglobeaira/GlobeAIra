@@ -33,11 +33,11 @@ export default function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div>
             <div className="flex items-center gap-3 mb-4">
-            <img
-              src={logo}
-              alt="GlobeAIra Logo"
-              className="w-20 h-20 object-contain rounded-xl shadow-glow border border-white/10 bg-white/5 p-1"
-            />
+              <img
+                src={logo}
+                alt="GlobeAIra Logo"
+                className="w-20 h-20 object-contain rounded-xl shadow-glow border border-white/10 bg-white/5 p-1"
+              />
               <div className="text-2xl font-black text-gradient">
                 GlobeAIra
                 <div><span className='text-sm font-bold text-gradient'>Tech Pvt Ltd</span></div>

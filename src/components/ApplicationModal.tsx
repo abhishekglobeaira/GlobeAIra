@@ -7,7 +7,7 @@ interface ApplicationModalProps {
   onClose: () => void;
 }
 
-interface FormData {
+interface ApplicationFormData {
   name: string;
   email: string;
   cvFile: File | null;
@@ -23,7 +23,7 @@ interface FormData {
   };
 }
 
-const INITIAL_FORM_DATA: FormData = {
+const INITIAL_FORM_DATA: ApplicationFormData = {
   name: "",
   email: "",
   cvFile: null,
@@ -44,11 +44,42 @@ export default function ApplicationModal({
   jobTitle,
   onClose,
 }: ApplicationModalProps) {
-  const [formData, setFormData] = useState<FormData>(INITIAL_FORM_DATA);
+  const [formData, setFormData] = useState<ApplicationFormData>(INITIAL_FORM_DATA);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL ?? '/api';
+
+  const submitApplication = async () => {
+    const payload = new FormData();
+
+    payload.append('name', formData.name);
+    payload.append('email', formData.email);
+    payload.append('phone', formData.phone);
+    payload.append('experience', formData.experience);
+    payload.append('skills', formData.skills);
+    payload.append('jobTitle', jobTitle);
+    payload.append('q1', formData.testAnswers.q1);
+    payload.append('q2', formData.testAnswers.q2);
+    payload.append('q3', formData.testAnswers.q3);
+    payload.append('q4', formData.testAnswers.q4);
+    payload.append('q5', formData.testAnswers.q5);
+
+    if (formData.cvFile) {
+      payload.append('cvFile', formData.cvFile);
+    }
+
+    const response = await fetch(`${backendUrl}/applications`, {
+      method: 'POST',
+      body: payload,
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      throw new Error(message || 'Unable to submit application');
+    }
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -61,7 +92,7 @@ export default function ApplicationModal({
       const questionKey = name.replace(
         "test_",
         "",
-      ) as keyof FormData["testAnswers"];
+      ) as keyof ApplicationFormData["testAnswers"];
 
       setFormData((prev) => ({
         ...prev,
@@ -99,12 +130,23 @@ export default function ApplicationModal({
 
     setLoading(true);
 
-    setTimeout(() => {
-      console.log("Submitted:", formData);
+    try {
+      if (!formData.cvFile) {
+        throw new Error('Resume upload is required');
+      }
 
+      await submitApplication();
       setSubmitted(true);
+    } catch (error) {
+      console.error('Application submission failed:', error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : 'Application submission failed. Please try again.',
+      );
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const isStep1Valid =
@@ -370,7 +412,7 @@ export default function ApplicationModal({
                         name={`test_${q.key}`}
                         value={
                           formData.testAnswers[
-                            q.key as keyof FormData["testAnswers"]
+                            q.key as keyof ApplicationFormData["testAnswers"]
                           ]
                         }
                         onChange={handleInputChange}

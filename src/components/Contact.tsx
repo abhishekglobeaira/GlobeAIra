@@ -1,7 +1,58 @@
+import { useState } from 'react';
 import { MessageCircle, Phone, Calendar, MapPin, Mail, Clock, Shield, CheckCircle, ArrowRight, User, Building, Code, Zap } from 'lucide-react';
 import Card3D from './Card3D';
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    companyName: '',
+    projectType: '',
+    projectDetails: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL ?? '/api';
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${backendUrl}/contacts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || 'Unable to submit contact request');
+      }
+
+      setSubmitted(true);
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        companyName: '',
+        projectType: '',
+        projectDetails: '',
+      });
+    } catch (error) {
+      console.error('Contact form submission failed:', error);
+      alert(error instanceof Error ? error.message : 'Contact form submission failed');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-transparent to-emerald-500/10" />
@@ -137,7 +188,13 @@ export default function Contact() {
 
             <Card3D>
               <div className="p-8 sm:p-12 rounded-2xl glass-effect border border-cyan-500/20">
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={handleSubmit}>
+                  {submitted && (
+                    <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-300">
+                      Thanks! Your request has been sent successfully.
+                    </div>
+                  )}
+
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-white font-medium mb-2 flex items-center gap-2">
@@ -146,7 +203,11 @@ export default function Contact() {
                       </label>
                       <input
                         type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
                         placeholder="John Doe"
+                        required
                         className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none transition-colors"
                       />
                     </div>
@@ -158,7 +219,11 @@ export default function Contact() {
                       </label>
                       <input
                         type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
                         placeholder="john@company.com"
+                        required
                         className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none transition-colors"
                       />
                     </div>
@@ -172,7 +237,11 @@ export default function Contact() {
                       </label>
                       <input
                         type="tel"
-                    placeholder="+91 9XXX-XXX-XXX"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="+91 9XXX-XXX-XXX"
+                        required
                         className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none transition-colors"
                       />
                     </div>
@@ -184,6 +253,9 @@ export default function Contact() {
                       </label>
                       <input
                         type="text"
+                        name="companyName"
+                        value={formData.companyName}
+                        onChange={handleChange}
                         placeholder="Your Company"
                         className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none transition-colors"
                       />
@@ -195,7 +267,12 @@ export default function Contact() {
                       <Code className="w-4 h-4 text-cyan-400" />
                       Project Type
                     </label>
-                    <select className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white bg-slate-900/50 focus:border-cyan-500/50 focus:outline-none transition-colors">
+                    <select
+                      name="projectType"
+                      value={formData.projectType}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white bg-slate-900/50 focus:border-cyan-500/50 focus:outline-none transition-colors"
+                    >
                       <option value="" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>Select a service</option>
                       <option value="ai" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>AI & Automation</option>
                       <option value="saas" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>SaaS / Product Engineering</option>
@@ -213,6 +290,9 @@ export default function Contact() {
                     </label>
                     <textarea
                       rows={6}
+                      name="projectDetails"
+                      value={formData.projectDetails}
+                      onChange={handleChange}
                       placeholder="Tell us about your goals, tech stack, timeline, and team requirements..."
                       className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none transition-colors resize-none"
                     ></textarea>
@@ -220,11 +300,12 @@ export default function Contact() {
 
                   <button
                     type="submit"
-                    className="group w-full relative inline-flex items-center justify-center gap-3 px-10 py-5 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 text-white text-lg font-bold overflow-hidden shadow-glow-lg hover:shadow-glow-cyan transition-all duration-300 transform hover:scale-105"
+                    disabled={isSubmitting}
+                    className="group w-full relative inline-flex items-center justify-center gap-3 px-10 py-5 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 text-white text-lg font-bold overflow-hidden shadow-glow-lg hover:shadow-glow-cyan transition-all duration-300 transform hover:scale-105 disabled:opacity-70"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 via-emerald-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <Calendar className="w-6 h-6 relative z-10 group-hover:rotate-12 transition-transform" />
-                    <span className="relative z-10">Submit Request</span>
+                    <span className="relative z-10">{isSubmitting ? 'Submitting...' : 'Submit Request'}</span>
                     <ArrowRight className="w-6 h-6 relative z-10 group-hover:translate-x-2 transition-transform" />
                   </button>
                 </form>

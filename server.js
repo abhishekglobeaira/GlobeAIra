@@ -10,10 +10,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/Globeaira';
-const SMTP_HOST = process.env.SMTP_HOST || 'smtp.example.com';
+const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
 const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465', 10);
 const SMTP_USER = (process.env.SMTP_USER || 'connect@globeaira.com').trim();
-const SMTP_PASS = (process.env.SMTP_PASS || 'advw ymvl dpdc mtry').replace(/\s+/g, '');
+const SMTP_PASS = (process.env.SMTP_PASS || 'advw ymvl dpdc mtry').trim();
 const EMAIL_FROM = (process.env.EMAIL_FROM || SMTP_USER).trim();
 const EMAIL_TO = (process.env.EMAIL_TO || 'connect@globeaira.com');
 

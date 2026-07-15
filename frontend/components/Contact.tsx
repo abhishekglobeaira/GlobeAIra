@@ -1,63 +1,80 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { MessageCircle, Phone, Calendar, MapPin, Mail, Clock, Shield, CheckCircle, ArrowRight, User, Building, Code, Zap } from 'lucide-react';
 import Card3D from './Card3D';
 
-export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    companyName: '',
-    projectType: '',
-    projectDetails: '',
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL ?? '/api';
+interface ContactFormData {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  projectType: string;
+  message: string;
+}
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+const INITIAL_CONTACT_FORM: ContactFormData = {
+  name: '',
+  email: '',
+  phone: '',
+  company: '',
+  projectType: '',
+  message: '',
+};
+
+export default function Contact() {
+  const [formData, setFormData] = useState<ContactFormData>(INITIAL_CONTACT_FORM);
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+    const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
+
+    if (loading) return;
+    setLoading(true);
+    setError(null);
 
     try {
-      const response = await fetch(`${backendUrl}/contacts`, {
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || 'Unable to submit contact request');
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error ?? 'Submission failed');
       }
 
       setSubmitted(true);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        companyName: '',
-        projectType: '',
-        projectDetails: '',
-      });
-    } catch (error) {
-      console.error('Contact form submission failed:', error);
-      alert(error instanceof Error ? error.message : 'Contact form submission failed');
+      setFormData(INITIAL_CONTACT_FORM);
+    } catch (err: any) {
+      setError(err.message || 'Unable to submit the contact form.');
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
     <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-transparent to-emerald-500/10" />
+        <div className="absolute top-20 right-10 w-96 h-96 bg-cyan-500/20 rounded-full blur-[120px] animate-pulse-slow" />
+        <div className="absolute bottom-40 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }} />
+
         <section className="relative py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-20">
+            <div className="text-center mb-20 animate-fade-in">
               <div className="inline-block mb-6">
                 <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass-effect border border-cyan-500/30 text-cyan-300 text-sm font-medium">
                   <MessageCircle className="w-4 h-4" />
@@ -182,11 +199,17 @@ export default function Contact() {
               </p>
             </div>
 
-            <div className="rounded-2xl glass-effect border border-cyan-500/20 p-8 sm:p-12 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:shadow-[0_0_30px_rgba(34,211,238,0.12)]">
-              <form className="space-y-6" onSubmit={handleSubmit}>
+            <Card3D disableMotion>
+              <div className="p-8 sm:p-12 rounded-2xl glass-effect border border-cyan-500/20">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   {submitted && (
-                    <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-300">
-                      Thanks! Your request has been sent successfully.
+                    <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-emerald-100">
+                      Thank you! Your request has been submitted.
+                    </div>
+                  )}
+                  {error && (
+                    <div className="rounded-2xl bg-rose-500/10 border border-rose-500/20 p-4 text-rose-100">
+                      {error}
                     </div>
                   )}
 
@@ -200,10 +223,9 @@ export default function Contact() {
                         type="text"
                         name="name"
                         value={formData.name}
-                        onChange={handleChange}
+                        onChange={handleInputChange}
                         placeholder="John Doe"
-                        required
-                        className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 hover:border-cyan-500/40 focus:outline-none transition-colors"
+                        className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none transition-colors"
                       />
                     </div>
 
@@ -216,10 +238,9 @@ export default function Contact() {
                         type="email"
                         name="email"
                         value={formData.email}
-                        onChange={handleChange}
+                        onChange={handleInputChange}
                         placeholder="john@company.com"
-                        required
-                        className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 hover:border-cyan-500/40 focus:outline-none transition-colors"
+                        className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -234,10 +255,9 @@ export default function Contact() {
                         type="tel"
                         name="phone"
                         value={formData.phone}
-                        onChange={handleChange}
+                        onChange={handleInputChange}
                         placeholder="+91 9XXX-XXX-XXX"
-                        required
-                        className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 hover:border-cyan-500/40 focus:outline-none transition-colors"
+                        className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none transition-colors"
                       />
                     </div>
 
@@ -248,11 +268,11 @@ export default function Contact() {
                       </label>
                       <input
                         type="text"
-                        name="companyName"
-                        value={formData.companyName}
-                        onChange={handleChange}
+                        name="company"
+                        value={formData.company}
+                        onChange={handleInputChange}
                         placeholder="Your Company"
-                        className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 hover:border-cyan-500/40 focus:outline-none transition-colors"
+                        className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -265,16 +285,30 @@ export default function Contact() {
                     <select
                       name="projectType"
                       value={formData.projectType}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white bg-slate-900/50 focus:border-cyan-500/50 hover:border-cyan-500/40 focus:outline-none transition-colors"
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white bg-slate-900/50 focus:border-cyan-500/50 focus:outline-none transition-colors"
                     >
-                      <option value="" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>Select a service</option>
-                      <option value="ai" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>AI & Automation</option>
-                      <option value="saas" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>SaaS / Product Engineering</option>
-                      <option value="qa" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>QA Engineering</option>
-                      <option value="bim" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>BIM / AEC</option>
-                      <option value="c2h" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>C2H / DRM Teams</option>
-                      <option value="other" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>Other</option>
+                      <option value="" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>
+                        Select a service
+                      </option>
+                      <option value="ai" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>
+                        AI & Automation
+                      </option>
+                      <option value="saas" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>
+                        SaaS / Product Engineering
+                      </option>
+                      <option value="qa" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>
+                        QA Engineering
+                      </option>
+                      <option value="bim" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>
+                        BIM / AEC
+                      </option>
+                      <option value="c2h" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>
+                        C2H / DRM Teams
+                      </option>
+                      <option value="other" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>
+                        Other
+                      </option>
                     </select>
                   </div>
 
@@ -284,26 +318,30 @@ export default function Contact() {
                       Project Details
                     </label>
                     <textarea
+                      name="message"
                       rows={6}
-                      name="projectDetails"
-                      value={formData.projectDetails}
-                      onChange={handleChange}
+                      value={formData.message}
+                      onChange={handleInputChange}
                       placeholder="Tell us about your goals, tech stack, timeline, and team requirements..."
-                      className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 hover:border-cyan-500/40 focus:outline-none transition-colors resize-none"
+                      className="w-full px-4 py-3 rounded-xl glass-effect border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none transition-colors resize-none"
                     ></textarea>
                   </div>
 
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="w-full inline-flex items-center justify-center gap-3 px-10 py-5 rounded-2xl bg-cyan-600 text-white text-lg font-bold shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-cyan-500 disabled:opacity-70"
+                    disabled={loading}
+                    className="group w-full relative inline-flex items-center justify-center gap-3 px-10 py-5 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 text-white text-lg font-bold overflow-hidden shadow-glow-lg hover:shadow-glow-cyan transition-all duration-300 transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    <Calendar className="w-6 h-6" />
-                    <span>{isSubmitting ? 'Submitting...' : 'Submit Request'}</span>
-                    <ArrowRight className="w-6 h-6" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 via-emerald-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <Calendar className="w-6 h-6 relative z-10 group-hover:rotate-12 transition-transform" />
+                    <span className="relative z-10">
+                      {loading ? 'Sending...' : 'Submit Request'}
+                    </span>
+                    <ArrowRight className="w-6 h-6 relative z-10 group-hover:translate-x-2 transition-transform" />
                   </button>
                 </form>
               </div>
+            </Card3D>
           </div>
         </section>
 

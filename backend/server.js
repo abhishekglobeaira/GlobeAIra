@@ -9,7 +9,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/Globeaira';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://abhishek_db_user:Abhishek2993@ac-dgpxv0f-shard-00-00.hs9gdhy.mongodb.net:27017,ac-dgpxv0f-shard-00-01.hs9gdhy.mongodb.net:27017,ac-dgpxv0f-shard-00-02.hs9gdhy.mongodb.net:27017/Globeaira?ssl=true&authSource=admin&retryWrites=true&w=majority&appName=Cluster0';
 const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
 const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465', 10);
 const SMTP_USER = (process.env.SMTP_USER || 'connect@globeaira.com').trim();

@@ -215,6 +215,11 @@ app.get(['/email-logs', '/api/email-logs'], async (_req, res) => {
 });
 
 const startServer = async () => {
+  // Start the Express server first so Render can detect the bound port and pass the health check.
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
+
   try {
     await mongoose.connect(MONGO_URI);
     console.log(`Connected to MongoDB at ${MONGO_URI}`);
@@ -227,13 +232,9 @@ const startServer = async () => {
         console.log('SMTP transporter ready:', success);
       }
     });
-
-    app.listen(PORT, () => {
-      console.log(`Server listening on http://localhost:${PORT}`);
-    });
   } catch (error) {
-    console.error('MongoDB connection failed:', error);
-    process.exit(1);
+    console.error('MongoDB connection failed. If you are on Render, ensure you have allowed access from anywhere (0.0.0.0/0) in your MongoDB Atlas Network Access settings.', error);
+    // Removed process.exit(1) to prevent the server from crashing immediately on startup if DB fails
   }
 };
 

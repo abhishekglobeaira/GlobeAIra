@@ -97,7 +97,11 @@ app.post(['/contact', '/contacts', '/api/contact', '/api/contacts'], async (req,
     });
   } catch (error) {
     console.error('Contact save failed:', error);
-    res.status(500).json({ success: false, message: 'Unable to save contact request.' });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Unable to save contact request.', 
+      error: error instanceof Error ? error.message : String(error)
+    });
   }
 });
 
@@ -158,7 +162,11 @@ app.post(['/application', '/applications', '/api/application', '/api/application
     });
   } catch (error) {
     console.error('Application save failed:', error);
-    res.status(500).json({ success: false, message: 'Unable to save application.' });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Unable to save application.',
+      error: error instanceof Error ? error.message : String(error)
+    });
   }
 });
 

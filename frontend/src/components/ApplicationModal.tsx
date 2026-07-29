@@ -49,7 +49,7 @@ export default function ApplicationModal({
   const [currentStep, setCurrentStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL ?? '/api';
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || (import.meta.env.DEV ? '/api' : 'https://globeaira.onrender.com');
 
   const submitApplication = async () => {
     const payload = new FormData();

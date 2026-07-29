@@ -13,7 +13,7 @@ export default function Contact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL ?? '/api';
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || (import.meta.env.DEV ? '/api' : 'https://globeaira.onrender.com');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

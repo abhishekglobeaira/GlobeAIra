@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://abhishek_db_user:Abhishek2993@ac-dgpxv0f-shard-00-00.hs9gdhy.mongodb.net:27017,ac-dgpxv0f-shard-00-01.hs9gdhy.mongodb.net:27017,ac-dgpxv0f-shard-00-02.hs9gdhy.mongodb.net:27017/Globeaira?ssl=true&authSource=admin&retryWrites=true&w=majority&appName=Cluster0';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://abhishek_db_user:Abhishek2993@cluster0.hs9gdhy.mongodb.net/Globeaira?retryWrites=true&w=majority&appName=Cluster0';
 const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
 const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465', 10);
 const SMTP_USER = (process.env.SMTP_USER || 'connect@globeaira.com').trim();
@@ -19,9 +19,23 @@ const SMTP_PASS = (process.env.SMTP_PASS || 'advw ymvl dpdc mtry').trim();
 const EMAIL_FROM = (process.env.EMAIL_FROM || SMTP_USER).trim();
 const EMAIL_TO = (process.env.EMAIL_TO || 'connect@globeaira.com');
 
+// Disable Mongoose buffering so operations fail fast instead of hanging for 10s
+mongoose.set('bufferCommands', false);
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware: return 503 immediately if MongoDB is not connected
+app.use(['/api', '/contact', '/contacts', '/application', '/applications', '/email-logs'], (_req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({
+      success: false,
+      message: 'Database is temporarily unavailable. Please try again in a moment.',
+    });
+  }
+  next();
+});
 
 // Serve frontend static files
 const __filename = fileURLToPath(import.meta.url);
@@ -242,9 +256,23 @@ const startServer = async () => {
   });
 
   try {
-    await mongoose.connect(MONGO_URI);
-    console.log(`Connected to MongoDB at ${MONGO_URI}`);
+    await mongoose.connect(MONGO_URI, {
+      serverSelectionTimeoutMS: 15000,  // Timeout after 15s if no server found
+      socketTimeoutMS: 45000,           // Close socket after 45s of inactivity
+    });
+    console.log('Connected to MongoDB successfully');
     console.log(`SMTP host=${SMTP_HOST} port=${SMTP_PORT} user=${SMTP_USER} target=${EMAIL_TO}`);
+
+    // Log reconnection events for diagnostics
+    mongoose.connection.on('disconnected', () => {
+      console.warn('MongoDB disconnected. Mongoose will attempt to reconnect...');
+    });
+    mongoose.connection.on('reconnected', () => {
+      console.log('MongoDB reconnected');
+    });
+    mongoose.connection.on('error', (err) => {
+      console.error('MongoDB connection error:', err);
+    });
 
     transporter.verify((error, success) => {
       if (error) {
@@ -254,8 +282,9 @@ const startServer = async () => {
       }
     });
   } catch (error) {
-    console.error('MongoDB connection failed. If you are on Render, ensure you have allowed access from anywhere (0.0.0.0/0) in your MongoDB Atlas Network Access settings.', error);
-    // Removed process.exit(1) to prevent the server from crashing immediately on startup if DB fails
+    console.error('MongoDB connection failed:', error.message);
+    console.error('Ensure you have allowed access from 0.0.0.0/0 in MongoDB Atlas Network Access settings.');
+    // Server keeps running — DB may reconnect later
   }
 };
 

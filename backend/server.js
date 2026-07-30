@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import multer from 'multer';
 import nodemailer from 'nodemailer';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
@@ -20,6 +22,12 @@ const EMAIL_TO = (process.env.EMAIL_TO || 'connect@globeaira.com');
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve frontend static files
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
+app.use(express.static(frontendDistPath));
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -220,6 +228,11 @@ app.get(['/email-logs', '/api/email-logs'], async (_req, res) => {
     console.error('Failed to read email logs:', error);
     res.status(500).json({ success: false, message: 'Unable to read email logs.' });
   }
+});
+
+// Catch-all: serve index.html for any non-API route (SPA client-side routing)
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(frontendDistPath, 'index.html'));
 });
 
 const startServer = async () => {

@@ -245,7 +245,8 @@ app.get(['/email-logs', '/api/email-logs'], async (_req, res) => {
 });
 
 // Catch-all: serve index.html for any non-API route (SPA client-side routing)
-app.get('/{*splat}', (_req, res) => {
+app.get('*', (_req, res) => {
+  // Serve the SPA entry point for any route not handled by the API
   res.sendFile(path.join(frontendDistPath, 'index.html'));
 });
 

@@ -119,9 +119,9 @@ app.post(['/contact', '/contacts', '/api/contact', '/api/contacts'], async (req,
     });
   } catch (error) {
     console.error('Contact save failed:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Unable to save contact request.', 
+    res.status(500).json({
+      success: false,
+      message: 'Unable to save contact request.',
       error: error instanceof Error ? error.message : String(error)
     });
   }
@@ -184,8 +184,8 @@ app.post(['/application', '/applications', '/api/application', '/api/application
     });
   } catch (error) {
     console.error('Application save failed:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Unable to save application.',
       error: error instanceof Error ? error.message : String(error)
     });
@@ -244,13 +244,12 @@ app.get(['/email-logs', '/api/email-logs'], async (_req, res) => {
   }
 });
 
-// Catch-all: serve index.html for any non-API route (SPA client-side routing)
-app.get('*', (_req, res) => {
-  // Serve the SPA entry point for any route not handled by the API
+// Fallback: serve SPA for any unmatched route (including root)
+app.use((_req, res) => {
   res.sendFile(path.join(frontendDistPath, 'index.html'));
 });
 
-const startServer = async () => {
+async function startServer() {
   // Start the Express server first so Render can detect the bound port and pass the health check.
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server listening on port ${PORT}`);
@@ -258,8 +257,8 @@ const startServer = async () => {
 
   try {
     await mongoose.connect(MONGO_URI, {
-      serverSelectionTimeoutMS: 15000,  // Timeout after 15s if no server found
-      socketTimeoutMS: 45000,           // Close socket after 45s of inactivity
+      serverSelectionTimeoutMS: 15000, // Timeout after 15s if no server found
+      socketTimeoutMS: 45000, // Close socket after 45s of inactivity
     });
     console.log('Connected to MongoDB successfully');
     console.log(`SMTP host=${SMTP_HOST} port=${SMTP_PORT} user=${SMTP_USER} target=${EMAIL_TO}`);
@@ -287,6 +286,6 @@ const startServer = async () => {
     console.error('Ensure you have allowed access from 0.0.0.0/0 in MongoDB Atlas Network Access settings.');
     // Server keeps running — DB may reconnect later
   }
-};
+}
 
 startServer();

@@ -255,6 +255,8 @@ async function startServer() {
     console.log(`Server listening on port ${PORT}`);
   });
 
+  console.log('Attempting MongoDB connection with URI:', MONGO_URI);
+
   try {
     await mongoose.connect(MONGO_URI, {
       serverSelectionTimeoutMS: 15000, // Timeout after 15s if no server found
